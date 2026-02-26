@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bljr BE 1</title>
+</head>
+<body>
+    <h2>Tambah User</h2>
+    <input type="text" id="nama" placeholder="Nama">
+    <input type="number" id="umur" placeholder="Umur">
+    <button onclick="tambahUser()">Tambah</button>
+    
+    <h2>Daftar User</h2>
+    <table border="1" cellpading="8">
+        <thead>
+            <tr><th>ID</th><th>Nama</th><th>Umur</th><th>Aksi</th></tr>
+        </thead>
+        <tBody id="tableUser"></tBody>
+    </table>
+
+
+    <script>
+        const API = '/api/users';
+
+        async function getUsers(){
+            const res = await fetch(API);
+            const data = await res.json();
+            const tbody = document.getElementById('tableUser');
+            tbody.innerHTML = '';
+            data.forEach(user => {
+                tbody.innerHTML += `
+                <tr>
+                    <td>${user.id}</td>
+                    <td>${user.nama}</td>
+                    <td>${user.umur}</td>
+                    <td><button onclick="hapusUser(${user.id})">Hapus</button></td>
+                </tr>`;
+            });
+        }
+
+        async function tambahUser(){
+            const nama = document.getElementById('nama').value;
+            const umur = document.getElementById('umur').value;
+            if(!nama || !umur) return alert('Isi nama dan umur dulu!');
+
+            await fetch(API, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({nama, umur})
+            });
+
+            document.getElementById('nama').value = '';
+            document.getElementById('umur').value = '';
+            getUsers();
+        }
+
+        async function hapusUser(id) {
+            await fetch(`${API}/${id}`, { method: 'DELETE' });
+            getUsers();
+        }
+
+        // Load data pertama kali
+        getUsers();
+    </script>
+</body>
+</html>
