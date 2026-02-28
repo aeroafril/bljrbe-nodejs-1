@@ -2,8 +2,6 @@ require('dotenv').config();
 const express = require('express');
 const mysql2 = require('mysql2/promise');
 const cors = require('cors');
-const path = require('path');
-const { error, log } = require('console');
 const app = express();
 
 app.use(cors());
